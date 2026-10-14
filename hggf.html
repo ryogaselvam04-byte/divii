@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Greeting Card</title>
+
+<style>
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+  font-family:sans-serif;
+  overflow:hidden;
+}
+
+#balloon-container{
+  position:fixed;
+  width:100%;
+  height:100%;
+  z-index:0;
+  overflow:hidden;
+}
+
+.balloon{
+  height:100px;
+  width:80px;
+  border-radius:75% 75% 70% 70%;
+  position:absolute;
+  bottom:-150px;
+  animation:float linear infinite;
+}
+
+.balloon::after{
+  content:"";
+  position:absolute;
+  bottom:-20px;
+  left:50%;
+  width:1.5px;
+  height:25px;
+  background:black;
+  transform:translateX(-50%);
+}
+
+@keyframes float{
+  0%{
+    transform:translateY(0);
+    opacity:1;
+  }
+
+  100%{
+    transform:translateY(-120vh);
+    opacity:0;
+  }
+}
+
+.card{
+  width:320px;
+  height:420px;
+  perspective:1000px;
+  z-index:2;
+  cursor:pointer;
+}
+
+.card-inner{
+  width:100%;
+  height:100%;
+  transition:0.8s;
+  transform-style:preserve-3d;
+  position:relative;
+}
+
+.card.flipped .card-inner{
+  transform:rotateY(180deg);
+}
+
+.card-front,
+.card-back{
+  position:absolute;
+  width:100%;
+  height:100%;
+  backface-visibility:hidden;
+  border-radius:15px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+}
+
+.card-front{
+  background:url("https://i.postimg.cc/Zq6CnZst/459f07e2-b86b-4001-ba9e-feb1d345ba24.jpg") center/cover;
+}
+
+.card-back{
+  background:white;
+  transform:rotateY(180deg);
+  text-align:center;
+  padding:15px;
+}
+
+.btn{
+  margin-top:15px;
+  padding:8px 15px;
+  border:none;
+  background:#ff4b5c;
+  color:white;
+  border-radius:20px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🎵 SONG LINK -->
+<audio
+  id="bgMusic"
+  src="https://files.catbox.moe/jq7aj7.mp3"
+  loop>
+</audio>
+
+<div id="balloon-container"></div>
+
+<div
+  class="card"
+  onclick="flipCard(this)"
+>
+
+  <div class="card-inner">
+
+    <div class="card-front"></div>
+
+    <div class="card-back">
+
+      <h2>
+        🎉 Happy Birthday!
+        DIVI💎🤌🏻
+      </h2>
+
+      <p id="typeText"></p>
+
+      <button
+        class="btn"
+        id="btn"
+        onclick="handleClick(event)"
+      >
+        Click Me
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+/* =====================================================
+   🎈 BALLOONS
+   ===================================================== */
+
+function createBalloons(){
+
+  const container =
+  document.getElementById(
+    "balloon-container"
+  );
+
+  for(
+    let i=0;
+    i<25;
+    i++
+  ){
+
+    let b =
+    document.createElement(
+      "div"
+    );
+
+    b.className =
+    "balloon";
+
+    let r =
+    Math.random()*255;
+
+    let g =
+    Math.random()*255;
+
+    let bl =
+    Math.random()*255;
+
+    b.style.left =
+    Math.random() *
+    window.innerWidth +
+    "px";
+
+    b.style.background =
+    `rgba(${r},${g},${bl},0.6)`;
+
+    b.style.animationDuration =
+    (4 + Math.random()*4) +
+    "s";
+
+    container.appendChild(b);
+
+  }
+
+}
+
+
+/* =====================================================
+   ⌨️ TYPEWRITER
+   ===================================================== */
+
+const message =
+`May your day be filled with happiness 💖
+Wishing you success and joy 🌟
+Have an amazing year ahead 🥳`;
+
+let i = 0;
+
+let typing = false;
+
+let finished = false;
+
+
+/* =====================================================
+   🔗 NEXT PAGE LINK
+   ===================================================== */
+
+function handleClick(e){
+
+  e.stopPropagation();
+
+  /* Start typing */
+  if(
+    !finished &&
+    !typing
+  ){
+
+    typing = true;
+
+    typeWriter();
+
+  }
+
+  /* After typing → go to link */
+  else if(finished){
+
+    /*
+      👇 CHANGE YOUR NEXT PAGE LINK HERE
+    */
+
+    window.location.href =
+    "https://ryogaselvam04-byte.github.io/divi/";
+
+  }
+
+}
+
+
+function typeWriter(){
+
+  if(
+    i < message.length
+  ){
+
+    document
+    .getElementById(
+      "typeText"
+    )
+    .innerHTML +=
+    message.charAt(i);
+
+    i++;
+
+    setTimeout(
+      typeWriter,
+      40
+    );
+
+  }
+
+  else{
+
+    finished = true;
+
+    typing = false;
+
+    document
+    .getElementById(
+      "btn"
+    )
+    .innerText =
+    "Next Page ➜";
+
+  }
+
+}
+
+
+/* =====================================================
+   💌 FLIP CARD
+   ===================================================== */
+
+function flipCard(card){
+
+  card.classList.toggle(
+    "flipped"
+  );
+
+}
+
+
+/* =====================================================
+   🎵 ANY CLICK → PLAY MUSIC
+   ===================================================== */
+
+document.addEventListener(
+  "click",
+  function(){
+
+    const audio =
+    document.getElementById(
+      "bgMusic"
+    );
+
+    audio
+    .play()
+    .catch(()=>{});
+
+  },
+  {
+    once:true
+  }
+);
+
+
+/* =====================================================
+   🚀 INIT
+   ===================================================== */
+
+window.onload = function(){
+
+  createBalloons();
+
+};
+
+</script>
+
+</body>
+</html>
